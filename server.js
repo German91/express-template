@@ -1,5 +1,4 @@
 require('dotenv').config();
-require('./config/config');
 require('./database/db');
 
 const express = require('express');
@@ -30,7 +29,7 @@ app.use(cookieParser());
 app.use(methodOverride());
 app.use(compression());
 app.use(cors());
-app.use(logger('combined'));
+app.use(logger('dev'));
 
 app.set('socket', io);
 
@@ -38,7 +37,7 @@ io.on('connection', () => console.log('User connected'));
 
 require('./routes')(app);
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, (err) => {
   if (err) {

@@ -4,9 +4,9 @@
   "description": "Express template",
   "main": "server.js",
   "scripts": {
-    "test": "NODE_ENV=test mocha tests/*.test.js",
+    "test": "mocha tests/*.test.js",
     "test-watch": "nodemon --exec \"npm test\"",
-    "dev": "NODE_ENV=development nodemon server.js",
+    "dev": "set NODE_ENV=development && nodemon server.js",
     "start": "node server.js"
   },
   "engines": {
