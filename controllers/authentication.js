@@ -41,7 +41,7 @@ exports.signin = (req, res) => {
       user: user.toJSON()
     });
   }).catch((e) => {
-    res.status(400).send({ code: 400, status: 'error', message: 'Token invalid or not provided' });
+    res.status(400).send({ code: 400, status: 'error', message: e });
   });
 };
 
@@ -65,11 +65,16 @@ exports.signin = (req, res) => {
  *     user: Object(_id, email, password, username, isAdmin)
  *   }
  * @apiError 400/Bad-Request               Invalid params
+ * @apiError 404/Not-Found                 User not found
  */
 exports.login = (req, res) => {
   let body = _.pick(req.body, ['username', 'password']);
 
   User.findByCredentials(body.username, body.password).then((user) => {
+    if (!user) {
+      return res.status(404).send({ code: 404, status: 'error', message: 'User not found' });
+    }
+
     return user.generateAuthToken().then((token) => {
       res.header('Authorization', token).status(200).send({
         code: 200,
@@ -77,8 +82,9 @@ exports.login = (req, res) => {
         user: user.toJSON()
       });
     });
-  }).catch(() => {
-    res.status(400).send({ code: 400, status: 'error', message: 'Token invalid or not provided' });
+  }).catch((e) => {
+    console.error(e);
+    res.status(400).send({ code: 400, status: 'error', message: e });
   });
 };
 
@@ -175,6 +181,42 @@ exports.resetPassword = (req, res) => {
         res.status(200).send({ code: 200, status: 'success', message: 'Password successfully updated' });
       });
     });
+  }).catch((e) => {
+    res.status(400).send({ code: 400, status: 'error', message: e });
+  });
+};
+
+/**
+ * @api {patch} /v1/auth/profile           Update profile
+ * @apiName UpdateProfile
+ * @apiVersion 1.0.0
+ * @apiGroup Authentication
+ *
+ * @apiHeader {String} Authorization        Authorization token.
+ *
+ * @apiSuccess (Success 2xx) 200/OK
+ * @apiSuccessExample Success-Response:
+ *   HTTP 200 OK
+ *   {
+ *     code: 200,
+ *     status: 'success',
+ *     message: 'Profile successfully updated'
+ *     user: Object(_id, email, username, isAdmin)
+ *   }
+ * @apiError 400/Bad-Request                Invalid params
+ * @apiError 404/Not-Found                  User not found
+ */
+exports.updateProfile = (req, res) => {
+  let body = _.pick(req.body, ['email', 'username']);
+
+  User.findByIdAndUpdate(req.user._id, {
+    $set: body
+  }, { new: true, runValidators: true, context: 'query' }).then((user) => {
+    if (!user) {
+      return res.status(404).send({ code: 404, status: 'error', message: 'User not found' });
+    }
+
+    res.status(200).send({ code: 200, status: 'success', message: 'Profile successfully updated', user: user.toJSON() });
   }).catch((e) => {
     res.status(400).send({ code: 400, status: 'error', message: e });
   });

@@ -9,5 +9,6 @@ Router.route('/profile').get(isLogged, Authentication.profile);
 Router.route('/forgot-password').post(Authentication.forgotPassword);
 Router.route('/reset-password').post(Authentication.resetPassword);
 Router.route('/logout').get(isLogged, Authentication.logout);
+Router.route('/profile').patch(isLogged, Authentication.updateProfile);
 
 module.exports = Router;

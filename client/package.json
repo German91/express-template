@@ -1,0 +1,41 @@
+{
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": {
+    "/api/*": {
+      "target": "http://localhost:8000"
+    }
+  },
+  "dependencies": {
+    "axios": "^0.16.2",
+    "bootstrap": "4.0.0-alpha",
+    "jsdom": "^11.3.0",
+    "lodash": "^4.17.4",
+    "moment": "^2.19.1",
+    "prop-types": "^15.6.0",
+    "react": "^16.0.0",
+    "react-addons-css-transition-group": "^15.6.2",
+    "react-addons-transition-group": "^15.6.2",
+    "react-dom": "^16.0.0",
+    "react-flip-move": "^2.9.17",
+    "react-redux": "^5.0.6",
+    "react-router-dom": "^4.2.2",
+    "react-spinkit": "^3.0.0",
+    "reactstrap": "^4.8.0",
+    "redux": "^3.7.2",
+    "redux-devtools-extension": "^2.13.2",
+    "redux-thunk": "^2.2.0",
+    "simple-line-icons": "^2.4.1",
+    "sweetalert-react": "^0.4.10"
+  },
+  "devDependencies": {
+    "react-scripts": "1.0.14"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

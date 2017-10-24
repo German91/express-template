@@ -4,7 +4,9 @@
   "description": "Express template",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon server.js",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix=client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
     "start": "node server.js",
     "test": "export NODE_ENV=test || SET \"NODE_ENV=test\" && mocha tests/*.test.js",
     "test-watch": "nodemon --exec \"npm test\"",
@@ -40,6 +42,7 @@
     "dotenv": "^4.0.0",
     "email-templates": "^3.0.6",
     "express": "^4.16.1",
+    "express-rate-limit": "^2.9.0",
     "handlebars": "^4.0.10",
     "helmet": "^3.8.2",
     "jsonwebtoken": "^8.0.1",
