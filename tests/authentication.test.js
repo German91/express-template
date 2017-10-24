@@ -261,6 +261,62 @@ describe('Authentication /api/v1/auth', () => {
     });
   });
 
+  describe('PATCH /auth/profile', () => {
+    it('should update user profile', (done) => {
+      let username = 'test updated';
+
+      request(app)
+        .patch('/api/v1/auth/profile')
+        .send({ username })
+        .set('authorization', users[1].tokens[0].token)
+        .expect((res) => {
+          expect(res.body.code).toBe(200);
+          expect(res.body.status).toBe('success');
+          expect(res.body.message).toBeDefined();
+          expect(typeof res.body.user).toBe('object');
+          expect(res.body.user.username).toBe(username);
+        })
+        .end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+
+          User.findOne({ username }).then((user) => {
+            expect(user.username).toBe(username);
+            done();
+          }).catch((e) => done(e));
+        });
+    });
+
+    it('should return 401 if token not provided', (done) => {
+      let username = 'test updated';
+
+      request(app)
+        .patch('/api/v1/auth/profile')
+        .send({ username })
+        .expect(401)
+        .end(done);
+    });
+
+    it('should return 400 if request invalid', (done) => {
+      request(app)
+        .patch('/api/v1/auth/profile')
+        .send({ username: '' })
+        .set('authorization', users[1].tokens[0].token)
+        .expect(400)
+        .end(done);
+    });
+
+    it('should return 400 if email/username is duplicated', (done) => {
+      request(app)
+        .patch('/api/v1/auth/profile')
+        .send({ username: users[0].username, email: users[0].email })
+        .set('authorization', users[1].tokens[0].token)
+        .expect(400)
+        .end(done);
+    });
+  });
+
   describe('GET /auth/logout', () => {
     it('should logout an user', (done) => {
       request(app)
