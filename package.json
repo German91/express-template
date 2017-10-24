@@ -4,10 +4,11 @@
   "description": "Express template",
   "main": "server.js",
   "scripts": {
-    "test": "mocha tests/*.test.js",
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "test": "export NODE_ENV=test || SET \"NODE_ENV=test\" && mocha tests/*.test.js",
     "test-watch": "nodemon --exec \"npm test\"",
-    "dev": "set NODE_ENV=development && nodemon server.js",
-    "start": "node server.js"
+    "doc": "apidoc -i controllers/ -o apidoc/"
   },
   "engines": {
     "node": "8.6.0"
@@ -57,6 +58,7 @@
     "validator": "^9.0.0"
   },
   "devDependencies": {
+    "apidoc": "^0.17.6",
     "expect": "^21.2.1",
     "mocha": "^4.0.0",
     "nodemon": "^1.12.1",

@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
-mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true });
+mongoose.Promise = global.Promise;
 
-var db = mongoose.connection;
+let db = mongoose.connection;
 
 db.once('open', () => {
   console.log('Connected to MongoDB server');

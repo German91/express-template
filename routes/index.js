@@ -1,7 +1,7 @@
-var Todos = require('./todos');
+const authRoutes = require('./auth');
 
 const routes = (app) => {
-  app.use('/api/v1/todos', Todos);
+  app.use('/api/v1/auth', authRoutes);
 };
 
 module.exports = routes;

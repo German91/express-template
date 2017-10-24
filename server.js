@@ -1,8 +1,7 @@
-require('dotenv').config();
+require('./config/config');
 require('./database/db');
 
 const express = require('express');
-const http = require('http');
 const path = require('path');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
@@ -12,9 +11,9 @@ const helmet = require('helmet');
 const cors = require('cors');
 const compression = require('compression');
 
-var app = express();
-var server = http.Server(app);
-var io = require('socket.io')(server);
+const port = process.env.PORT || 8000;
+
+let app = express();
 
 app.disable('x-powered-by');
 app.use(helmet.xssFilter());
@@ -29,22 +28,17 @@ app.use(cookieParser());
 app.use(methodOverride());
 app.use(compression());
 app.use(cors());
-app.use(logger('dev'));
 
-app.set('socket', io);
+if (process.env.NODE_ENV !== 'test') {
+  app.use(logger('dev'));
+}
 
-io.on('connection', () => console.log('User connected'));
+app.use('/', express.static(__dirname + '/apidoc'));
 
 require('./routes')(app);
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, (err) => {
-  if (err) {
-      console.error(err);
-  } else {
-    console.info("==> 🌎  Listening on port %s. Visit http://localhost:%s/ in your browser.", PORT, PORT);
-  }
+app.listen(port, () => {
+  console.log(`Server running at port ${port}`);
 });
 
 module.exports = { app };

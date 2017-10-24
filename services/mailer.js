@@ -1,9 +1,9 @@
 const nodemailer = require('nodemailer');
 const path = require('path');
-const emailTemplate = require('email-templates');
+const Email = require('email-templates');
 
-var transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
+let transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
     secure: false,
     auth: {
@@ -13,24 +13,28 @@ var transporter = nodemailer.createTransport({
 });
 
 /**
- * Rende a template and send an email
- * @param  {Object}   user          User's email and data to send
- * @param  {String}   subject       Email subject
- * @param  {String}   templateName  Templane to render
- * @param  {Function} callback      Callback
- * @return {String}   Response's message
+ * Render a template and send an email
+ * @param  {String}   to            Email
+ * @param  {Object}   data          Extra information
+ * @param  {String}   template      Templane to render
+ * @return {Promise}
  */
-exports.sendMail = (user, subject, templateName, callback) => {
-  var templatesDir = path.resolve(__dirname, '..', 'templates');
-  var template = new emailTemplate(path.join(templatesDir, templateName));
+const sendMail = (to, data, template) => {
+  let email = new Email({
+    message: { from: process.env.EMAIL_USER },
+    transport: transporter,
+    views: {
+      options: {
+        extension: 'handlebars'
+      }
+    }
+  });
 
-  template.render(user, (err, results) => {
-    if (err) return callback(err);
-
-    transporter.sendMail({ from: process.env.EMAIL_USER, to: user.email, subject, html: results.html }, (err, response) => {
-      if (err) return callback(err);
-
-      callback(null, response.message);
-    });
+  return new Promise(function(resolve, reject) {
+    return email.send({ template, message: { to }, locals: data })
+    .then(() => resolve())
+    .catch((e) => reject(new Error('Unable to send email', 500)));
   });
 };
+
+module.exports = { sendMail };
